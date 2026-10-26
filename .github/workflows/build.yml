@@ -52,11 +52,18 @@ jobs:
           npx cap init "My Notes" com.mynotes.app --web-dir=www
           npx cap add android
 
-      - name: Generate app icon (only if assets/icon-only.png exists)
+      - name: Generate app icon
         run: |
+          # The generator expects 'icon.png'. This safely renames it if you used 'icon-only.png'.
           if [ -f assets/icon-only.png ]; then
+            mv assets/icon-only.png assets/icon.png
+          fi
+          
+          if [ -f assets/icon.png ]; then
             npm install @capacitor/assets
-            npx capacitor-assets generate --android --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#ffffff'
+            npx capacitor-assets generate --android --iconBackgroundColor '#ffffff'
+          else
+            echo "No custom icon found in assets folder. Using default."
           fi
 
       - name: Build APK
